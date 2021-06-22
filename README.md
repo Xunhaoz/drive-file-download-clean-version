@@ -2,7 +2,7 @@
 
 ## 0. Install Library
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## 1. Prepare User Token
