@@ -21,7 +21,7 @@ python makeauth.py # Then select an account.
 Prepare a files contain urls #like sample_urls.txt
 Then Run
 ```
-python download_utils --urls_file=sample_urls.txt --folder=data > log.txt
+python download_utils.py --urls_file=sample_urls.txt --folder=data > log.txt
 ```
 ### In notebook
 ```
