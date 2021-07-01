@@ -1,0 +1,9 @@
+# Not support folder
+https://drive.google.com/drive/folders/1aQXUUaKQkBDz7cofkil-WyNBPmFSd_DW?usp=sharing # Folder -> not support
+
+# Following types are supported
+https://docs.google.com/spreadsheets/d/1bAyTQqBuUcIVrLYnDXjwCKvliHq_DoU0rwn_CjJFrao/edit#gid=0 # Google Sheet -> *.xlsx
+https://docs.google.com/presentation/d/1_nvCSaU6UUKOeoCeytfZcZPbg5MoiCCF1zKTPntAXuI/edit?usp=sharing # Google Slide -> *.pptx
+https://docs.google.com/document/d/1Ad8LR5MlEFsXyrRlCmmyoycxkvQeoUt4rBzNCjeSCfo/edit?usp=sharing # Google doc -> *.docx
+https://drive.google.com/file/d/1FP7dKwdSiH_YNFU_nm82IWiE-YFyUKfp/view?usp=sharing # Normal File -> work
+https://drive.google.com/file/d/13n2MpP2xojhXEfuTehnCMhlE0XWOOdXc/view?usp=sharing # Normal File -> work

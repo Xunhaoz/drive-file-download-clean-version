@@ -13,11 +13,30 @@ import sys
 import re
 import json
 
+import argparse
+
 import pprint
 pprint = pprint.PrettyPrinter(indent=2).pprint
 
-GOOGLE_SLIDE_MIMETYPE = "application/vnd.google-apps.presentation"
-PPTX_MIMETYPE = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+google_file_prefix = "application/vnd.google-apps."
+office_prefix = "application/vnd.openxmlformats-officedocument."
+google_office_mapper = {
+  google_file_prefix+google_postfix:
+  office_prefix+office_postfix
+  
+  for google_postfix,office_postfix in [
+    ["document", "wordprocessingml.document"],
+    ["presentation", "presentationml.presentation"],
+    ["spreadsheet", "spreadsheetml.sheet"]
+  ]
+}
+
+def file_extension_mapper(originalMimeType):
+  if originalMimeType in google_office_mapper.keys():
+    if "document" in originalMimeType: return ".docx"
+    if "presentation" in originalMimeType: return ".pptx"
+    if "spreadsheet" in originalMimeType: return ".xlsx"
+  return ""
 
 def download_a_file_with_id(file_id, folder_path="data"):
   creds = makeauth.get_creds(force=False)
@@ -31,30 +50,28 @@ def download_a_file_with_id(file_id, folder_path="data"):
   meta = r.execute()
   pprint(meta)
 
-  if meta["mimeType"] == GOOGLE_SLIDE_MIMETYPE:
-    request = (
-      drive_service.files()
-      .export_media(
-        fileId=file_id,
-        mimeType=PPTX_MIMETYPE,
-        # supportsAllDrives=True,
-      )
+  file_mimeType = meta["mimeType"]
+  target_mimeType = google_office_mapper.get(file_mimeType, file_mimeType)
+
+  if target_mimeType != file_mimeType:
+    # 特殊檔案，如google doc/sheet/slide
+    # 下方的mimeType為期望轉換的格式
+    request = drive_service.files().export_media(
+      fileId=file_id,
+      mimeType=target_mimeType,
     )
-    filename = meta["name"]+".pptx"
   else:
-    request = (
-      drive_service.files()
-      .get_media(
-        fileId=file_id,
-        supportsAllDrives=True
-      )
+    # 一般檔案，如pdf, mov, mp4
+    request = drive_service.files().get_media(
+      fileId=file_id,
+      supportsAllDrives=True,
     )
-    filename = meta["name"]
   
   filepath = os.path.join("")
   
-  def final_name(fname):
+  def final_name(meta):
     import datetime
+    fname = meta["name"]
     fmt='%Y-%m-%d-%H-%M-%S'
     timestamp = datetime.datetime.now().strftime(fmt)
     
@@ -70,10 +87,11 @@ def download_a_file_with_id(file_id, folder_path="data"):
       
     return os.path.join(
       folder_path,
-      rename,
+      rename+file_extension_mapper(meta["mimeType"])
     )
+  filename = final_name(meta)
   
-  with io.FileIO(final_name(filename), "wb") as fh:
+  with io.FileIO(filename, "wb") as fh:
     print("start downloading")
     downloader = MediaIoBaseDownload(fh, request)
     done = False
@@ -89,8 +107,8 @@ def parse_urls_to_fileIds(raw_text):
   """
   pattern = "([-\w]{25,})"
   fileIds_list = re.findall(pattern, raw_text)
-  print(f"find {len(fileIds_list)} urls")
-  print(*fileIds_list, sep='\n')
+  print(f"find {len(fileIds_list)} fileIds")
+  pprint(fileIds_list)
   return fileIds_list
 
 def download_from_fileIds_to_folder(fileIds_list, folder_path="data"):
@@ -116,7 +134,7 @@ def download_from_fileIds_to_folder(fileIds_list, folder_path="data"):
       if not error_log_file:
         error_log_file = open(
           os.path.join(folder_path, f"error_log_{datetime.date.today()}.txt"),
-          "a"
+          "w"
         )
       print(fileId, e)
 
@@ -128,6 +146,9 @@ def download_from_fileIds_to_folder(fileIds_list, folder_path="data"):
   return meta_list
   
 def download_from_raw_to_folder(raw_text,folder_path="data"):
+  from pathlib import Path
+  Path(folder_path).mkdir(parents=False, exist_ok=True)
+  
   fileIds_list = parse_urls_to_fileIds(raw_text)
   json.dump(
     fileIds_list,
@@ -150,4 +171,15 @@ def download_from_raw_to_folder(raw_text,folder_path="data"):
     ),
     indent=2,
   )
+
   
+if __name__ == "__main__":
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--urls_file',required=True)
+  parser.add_argument('--folder',required=True)
+  args = parser.parse_args()
+
+  raw_text = open(args.urls_file,"r").read()
+  folder = args.folder
+
+  download_from_raw_to_folder(raw_text, folder)
