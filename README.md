@@ -25,7 +25,7 @@ url2
 url3
 ...
 ```
-# Like sample_urls.txt<br>
+Like sample_urls.txt<br>
 Then Run
 ```
 python download_utils.py --urls_file=sample_urls.txt --folder=data > log.txt
