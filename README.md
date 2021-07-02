@@ -18,7 +18,14 @@ python makeauth.py # Then select an account.
 
 ## 2. Start Download From Urls
 ### In command line
-Prepare a files contain urls #like sample_urls.txt
+Prepare a files contain urls<br>
+```
+url1
+url2
+url3
+...
+```
+# Like sample_urls.txt<br>
 Then Run
 ```
 python download_utils.py --urls_file=sample_urls.txt --folder=data > log.txt
