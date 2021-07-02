@@ -1,5 +1,5 @@
 # Download Google Drive Files From URLs
-For chinese tutorial, please refer to my medium(wait link)
+For chinese version step-by-step tutorial, please refer to my [medium]()https://changethewhat.medium.com/google-drive-api-python-%E5%BE%9E0%E9%96%8B%E5%A7%8B%E5%88%B0%E5%BE%9Eurl%E4%B8%8B%E8%BC%89%E6%AA%94%E6%A1%88%E7%AF%84%E4%BE%8B-a182ce279073
 
 ## 0. Install Library
 ```
