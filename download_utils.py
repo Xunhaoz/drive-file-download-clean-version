@@ -176,7 +176,7 @@ def download_from_raw_to_folder(raw_text,folder_path="data"):
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument('--urls_file',required=True)
-  parser.add_argument('--folder',required=True)
+  parser.add_argument('--target_folder',required=True)
   args = parser.parse_args()
 
   raw_text = open(args.urls_file,"r").read()
